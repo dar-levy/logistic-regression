@@ -43,15 +43,13 @@ def feature_selection(X, y, n_features=5):
     # TODO: Implement the function.                                           #
     ###########################################################################
     correlations = []
-    for i in range(X.shape[1]):
-        corr = pearson_correlation(X[:, i], y)
-        correlations.append((i, corr))
+    for column in X.columns:
+        column_data = X[column].values
+        corr = pearson_correlation(column_data, y)
+        correlations.append((column, corr))
 
-    # Sort features by absolute value of correlation in descending order
     correlations.sort(key=lambda x: abs(x[1]), reverse=True)
-
-    # Select the indices of the top n features
-    best_features = [idx for idx, _ in correlations[:n_features]]
+    best_features = [column for column, _ in correlations[:n_features]]
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
