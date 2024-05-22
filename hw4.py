@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-def pearson_correlation( x, y):
+def pearson_correlation(x, y):
     """
     Calculate the Pearson correlation coefficient for two given columns of data.
 
@@ -17,7 +17,11 @@ def pearson_correlation( x, y):
     ###########################################################################
     # TODO: Implement the function.                                           #
     ###########################################################################
-    pass
+    x_mean = np.mean(x)
+    y_mean = np.mean(y)
+    numerator = np.sum((x - x_mean) * (y - y_mean))
+    denominator = np.sqrt(np.sum((x - x_mean) ** 2) * np.sum((y - y_mean) ** 2))
+    r = numerator / denominator if denominator != 0 else 0
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
@@ -38,7 +42,14 @@ def feature_selection(X, y, n_features=5):
     ###########################################################################
     # TODO: Implement the function.                                           #
     ###########################################################################
-    pass
+    correlations = []
+    for column in X.columns:
+        column_data = X[column].values
+        corr = pearson_correlation(column_data, y)
+        correlations.append((column, corr))
+
+    correlations.sort(key=lambda x: abs(x[1]), reverse=True)
+    best_features = [column for column, _ in correlations[:n_features]]
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
