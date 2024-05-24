@@ -194,11 +194,7 @@ def cross_validation(X, y, folds, algo, random_state):
     # TODO: Implement the function.                                           #
     ###########################################################################
     # Shuffle the data.
-    indices = np.arange(X.shape[0])
-    np.random.shuffle(indices)
-    X = X[indices]
-    y = y[indices]
-
+    X, y = _shuffle_data(X, y)
     fold_size = X.shape[0] // folds
     accuracies = []
 
@@ -228,6 +224,15 @@ def cross_validation(X, y, folds, algo, random_state):
     #                             END OF YOUR CODE                            #
     ###########################################################################
     return cv_accuracy
+
+def _shuffle_data(X, y):
+    indices = np.arange(X.shape[0])
+    np.random.shuffle(indices)
+    X = X[indices]
+    y = y[indices]
+
+    return X, y
+
 
 def norm_pdf(data, mu, sigma):
     """
