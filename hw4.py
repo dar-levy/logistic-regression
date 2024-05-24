@@ -110,7 +110,22 @@ class LogisticRegressionGD(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        pass
+        X = self._add_bias_term(X)
+        np.random.seed(self.random_state)
+        self.theta = np.random.random(X.shape[1])
+
+        for _ in range(self.n_iter):
+            z = np.dot(X, self.theta)
+            h = self._sigmoid(z)
+            gradient = np.dot(X.T, (h - y))
+            self.theta -= self.eta * gradient
+            cost = self._compute_cost(h, y)
+            self.Js.append(cost)
+            self.thetas.append(self.theta.copy())
+
+            # Check for convergence
+            if len(self.Js) > 1 and abs(cost - self.Js[-2]) < self.eps:
+                break
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
@@ -126,11 +141,25 @@ class LogisticRegressionGD(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        pass
+        X = self._add_bias_term(X)
+        z = np.dot(X, self.theta)
+        h = self._sigmoid(z)
+        preds = np.round(h).astype(int)
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
         return preds
+
+    def _add_bias_term(self, X):
+        return np.insert(X, 0, 1, axis=1)
+
+    def _sigmoid(self, z):
+        return 1.0 / (1.0 + np.exp(-z))
+
+    def _compute_cost(self, h, y):
+        m = len(y)
+        return (-1 / m) * np.sum(y * np.log(h) + (1 - y) * np.log(1 - h))
+
 
 def cross_validation(X, y, folds, algo, random_state):
     """
