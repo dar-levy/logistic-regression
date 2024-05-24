@@ -133,36 +133,12 @@ class LogisticRegressionGD(object):
         return preds
 
     def _add_bias_term(self, X):
-        """
-        Adds a column of 1s as the first feature to account for the bias term.
-
-        Parameters
-        ----------
-        X : {array-like}, shape = [n_examples, n_features]
-        """
         return np.insert(X, 0, 1, axis=1)
 
     def _sigmoid(self, z):
-        """
-        Sigmoid activation function.
-
-        Parameters
-        ----------
-        z : array-like
-        """
         return 1.0 / (1.0 + np.exp(-z))
 
     def _compute_cost(self, h, y):
-        """
-        Compute the cost function for all the training samples.
-
-        Parameters
-        ----------
-        h : array-like
-          Predicted values.
-        y : array-like
-          Target values.
-        """
         m = len(y)
         return (-1 / m) * np.sum(y * np.log(h) + (1 - y) * np.log(1 - h))
 
