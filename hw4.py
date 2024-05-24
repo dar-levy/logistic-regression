@@ -350,7 +350,22 @@ class EM(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        pass
+        self.init_params(data)
+        self.costs.append(self.cost(data))
+
+        # Finding the the params for the distribution.
+        # We stop when the difference between the previous cost and the current is less than epsilon,
+        # Or when we reach n_iter.
+        for _ in range(self.n_iter):
+            cost = self.cost(data)
+            self.costs.append(cost)
+            self.expectation(data)
+            self.maximization(data)
+            if self.costs[-1] - cost < self.eps:
+                if self.costs[-1] > cost:
+                    self.costs.append(cost)
+                    break
+            self.costs.append(cost)
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
