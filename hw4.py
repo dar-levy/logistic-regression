@@ -193,11 +193,51 @@ def cross_validation(X, y, folds, algo, random_state):
     ###########################################################################
     # TODO: Implement the function.                                           #
     ###########################################################################
-    pass
+    X, y = _shuffle_data(X, y)
+    fold_size = X.shape[0] // folds
+    accuracies = []
+
+    for i in range(folds):
+        X_train, y_train, X_test, y_test = _split_data(X, y, i, fold_size)
+
+        algo.fit(X_train, y_train)
+        y_pred = algo.predict(X_test)
+
+        accuracy = _calculate_accuracy(y_pred, y_test)
+        accuracies.append(accuracy)
+
+    cv_accuracy = np.mean(accuracies)
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
     return cv_accuracy
+
+
+def _shuffle_data(X, y):
+    indices = np.arange(X.shape[0])
+    np.random.shuffle(indices)
+    X = X[indices]
+    y = y[indices]
+
+    return X, y
+
+
+def _split_data(X, y, fold_index, fold_size):
+    test_start = fold_index * fold_size
+    test_end = (fold_index + 1) * fold_size
+    X_test = X[test_start:test_end]
+    y_test = y[test_start:test_end]
+
+    train_indices = np.concatenate((np.arange(test_start), np.arange(test_end, X.shape[0])))
+    X_train = X[train_indices]
+    y_train = y[train_indices]
+
+    return X_train, y_train, X_test, y_test
+
+
+def _calculate_accuracy(y_pred, y_test):
+    return np.mean(y_pred == y_test)
+
 
 def norm_pdf(data, mu, sigma):
     """
