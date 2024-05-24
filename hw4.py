@@ -132,6 +132,16 @@ class LogisticRegressionGD(object):
         ###########################################################################
         return preds
 
+    def _add_bias_term(self, X):
+        """
+        Adds a column of 1s as the first feature to account for the bias term.
+
+        Parameters
+        ----------
+        X : {array-like}, shape = [n_examples, n_features]
+        """
+        return np.insert(X, 0, 1, axis=1)
+
 def cross_validation(X, y, folds, algo, random_state):
     """
     This function performs cross validation as seen in class.
