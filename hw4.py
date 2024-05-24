@@ -193,7 +193,37 @@ def cross_validation(X, y, folds, algo, random_state):
     ###########################################################################
     # TODO: Implement the function.                                           #
     ###########################################################################
-    pass
+    # Shuffle the data.
+    indices = np.arange(X.shape[0])
+    np.random.shuffle(indices)
+    X = X[indices]
+    y = y[indices]
+
+    fold_size = X.shape[0] // folds
+    accuracies = []
+
+    for i in range(folds):
+        # Split data into train and test sets for the current fold.
+        test_start = i * fold_size
+        test_end = (i + 1) * fold_size
+        X_test = X[test_start:test_end]
+        y_test = y[test_start:test_end]
+
+        train_indices = np.concatenate((np.arange(test_start), np.arange(test_end, X.shape[0])))
+        X_train = X[train_indices]
+        y_train = y[train_indices]
+
+        # Fit the algorithm on the training data.
+        algo.fit(X_train, y_train)
+
+        # Predict labels for the test data.
+        y_pred = algo.predict(X_test)
+
+        # Calculate accuracy.
+        accuracy = np.mean(y_pred == y_test)
+        accuracies.append(accuracy)
+
+    cv_accuracy = np.mean(accuracies)
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
