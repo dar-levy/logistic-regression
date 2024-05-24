@@ -330,7 +330,10 @@ class EM(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        pass
+        self.weights = np.mean(self.responsibilities, axis=0)
+        self.mus = np.sum(self.responsibilities * data.reshape(-1, 1), axis=0) / np.sum(self.responsibilities, axis=0)
+        variance = np.mean(self.responsibilities * np.square(data.reshape(-1, 1) - self.mus), axis=0)
+        self.sigmas = np.sqrt(variance / self.weights)
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
