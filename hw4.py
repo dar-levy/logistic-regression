@@ -357,7 +357,7 @@ class EM(object):
         # We stop when the difference between the previous cost and the current is less than epsilon,
         # Or when we reach n_iter.
         for _ in range(self.n_iter):
-            cost = self.cost(data)
+            cost = self._cost(data)
             self.costs.append(cost)
             self.expectation(data)
             self.maximization(data)
@@ -369,6 +369,14 @@ class EM(object):
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
+
+    # Calculating the cost of the data.
+    def _cost(self, data):
+        sum_cost = 0
+        cost = self.weights * norm_pdf(data,self.mus,self.sigmas)
+        for i in range(len(data)):
+            sum_cost = sum_cost + cost[i]
+        return -np.sum(np.log(sum_cost))
 
     def get_dist_params(self):
         return self.weights, self.mus, self.sigmas
