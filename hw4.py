@@ -212,6 +212,7 @@ def cross_validation(X, y, folds, algo, random_state):
     ###########################################################################
     return cv_accuracy
 
+
 def _shuffle_data(X, y):
     indices = np.arange(X.shape[0])
     np.random.shuffle(indices)
@@ -219,6 +220,7 @@ def _shuffle_data(X, y):
     y = y[indices]
 
     return X, y
+
 
 def _split_data(X, y, fold_index, fold_size):
     test_start = fold_index * fold_size
@@ -232,8 +234,10 @@ def _split_data(X, y, fold_index, fold_size):
 
     return X_train, y_train, X_test, y_test
 
+
 def _calculate_accuracy(y_pred, y_test):
     return np.mean(y_pred == y_test)
+
 
 def norm_pdf(data, mu, sigma):
     """
