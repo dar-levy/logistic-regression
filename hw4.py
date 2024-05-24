@@ -233,6 +233,17 @@ def _shuffle_data(X, y):
 
     return X, y
 
+def _split_data(X, y, fold_index, fold_size):
+    test_start = fold_index * fold_size
+    test_end = (fold_index + 1) * fold_size
+    X_test = X[test_start:test_end]
+    y_test = y[test_start:test_end]
+
+    train_indices = np.concatenate((np.arange(test_start), np.arange(test_end, X.shape[0])))
+    X_train = X[train_indices]
+    y_train = y[train_indices]
+
+    return X_train, y_train, X_test, y_test
 
 def norm_pdf(data, mu, sigma):
     """
