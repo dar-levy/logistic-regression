@@ -351,7 +351,7 @@ class EM(object):
         # TODO: Implement the function.                                           #
         ###########################################################################
         self.init_params(data)
-        self.costs.append(self.cost(data))
+        self.costs = [self._cost(data)]
 
         # Finding the the params for the distribution.
         # We stop when the difference between the previous cost and the current is less than epsilon,
