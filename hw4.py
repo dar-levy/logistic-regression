@@ -110,7 +110,22 @@ class LogisticRegressionGD(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        pass
+        X = self._add_bias_term(X)
+        np.random.seed(self.random_state)
+        self.theta = np.random.random(X.shape[1])
+
+        for _ in range(self.n_iter):
+            z = np.dot(X, self.theta)
+            h = self._sigmoid(z)
+            gradient = np.dot(X.T, (h - y))
+            self.theta -= self.eta * gradient
+            cost = self._compute_cost(h, y)
+            self.Js.append(cost)
+            self.thetas.append(self.theta.copy())
+
+            # Check for convergence
+            if len(self.Js) > 1 and abs(cost - self.Js[-2]) < self.eps:
+                break
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
