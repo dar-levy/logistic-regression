@@ -152,6 +152,21 @@ class LogisticRegressionGD(object):
         """
         return 1.0 / (1.0 + np.exp(-z))
 
+    def _compute_cost(self, h, y):
+        """
+        Compute the cost function for all the training samples.
+
+        Parameters
+        ----------
+        h : array-like
+          Predicted values.
+        y : array-like
+          Target values.
+        """
+        m = len(y)
+        return (-1 / m) * np.sum(y * np.log(h) + (1 - y) * np.log(1 - h))
+
+
 def cross_validation(X, y, folds, algo, random_state):
     """
     This function performs cross validation as seen in class.
