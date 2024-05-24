@@ -142,6 +142,16 @@ class LogisticRegressionGD(object):
         """
         return np.insert(X, 0, 1, axis=1)
 
+    def _sigmoid(self, z):
+        """
+        Sigmoid activation function.
+
+        Parameters
+        ----------
+        z : array-like
+        """
+        return 1.0 / (1.0 + np.exp(-z))
+
 def cross_validation(X, y, folds, algo, random_state):
     """
     This function performs cross validation as seen in class.
