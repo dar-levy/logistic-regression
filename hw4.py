@@ -245,6 +245,9 @@ def _split_data(X, y, fold_index, fold_size):
 
     return X_train, y_train, X_test, y_test
 
+def _calculate_accuracy(y_pred, y_test):
+    return np.mean(y_pred == y_test)
+
 def norm_pdf(data, mu, sigma):
     """
     Calculate normal desnity function for a given data,
