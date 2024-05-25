@@ -531,7 +531,15 @@ def model_evaluation(x_train, y_train, x_test, y_test, k, best_eta, best_eps):
     ###########################################################################
     # TODO: Implement the function.                                           #
     ###########################################################################
-    pass
+    logistic_model = LogisticRegressionGD(eta=best_eta, eps=best_eps)
+    logistic_model.fit(x_train, y_train)
+    lor_train_acc = _calculate_accuracy(y_train, logistic_model.predict(x_train))
+    lor_test_acc = _calculate_accuracy(y_test, logistic_model.predict(x_test))
+
+    gaussian_model = NaiveBayesGaussian(k=k)
+    gaussian_model.fit(x_train, y_train)
+    bayes_train_acc = _calculate_accuracy(y_train, gaussian_model.predict(x_train))
+    bayes_test_acc = _calculate_accuracy(y_test, gaussian_model.predict(x_test))
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
