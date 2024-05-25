@@ -303,7 +303,7 @@ class EM(object):
         ###########################################################################
         indexes = np.random.choice(data.shape[0], self.k, replace=False)
         self.mus = data[indexes].reshape(self.k)
-        self.sigmas = np.random.random_integers(self.k)
+        self.sigmas = np.random.random(self.k)
         self.weights = np.ones(self.k) / self.k
         ###########################################################################
         #                             END OF YOUR CODE                            #
