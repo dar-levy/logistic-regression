@@ -301,7 +301,10 @@ class EM(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        pass
+        indexes = np.random.choice(data.shape[0], self.k, replace=False)
+        self.weights = np.ones(self.k) / self.k
+        self.mus = data[indexes].reshape(self.k)
+        self.sigmas = np.random.random(self.k)
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
@@ -313,10 +316,15 @@ class EM(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        pass
+        weighted_pdfs = self.weights * self._compute_normal_pdf(data, self.mus, self.sigmas)
+        sum_weighted_pdfs = np.sum(weighted_pdfs, axis=1, keepdims=True)
+        self.responsibilities = weighted_pdfs / sum_weighted_pdfs
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
+
+    def _compute_normal_pdf(self, data, mus, sigmas):
+        return (1 / (np.sqrt(2 * np.pi) * sigmas)) * np.exp(-0.5 * ((data - mus) / sigmas) ** 2)
 
     def maximization(self, data):
         """
@@ -325,7 +333,11 @@ class EM(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        pass
+        self.weights = np.mean(self.responsibilities, axis=0)
+        responsibilities_sum = np.sum(self.responsibilities, axis=0)
+        self.mus = np.sum(self.responsibilities * data.reshape(-1,1), axis=0) / responsibilities_sum
+        variance = np.mean(self.responsibilities * np.square(data.reshape(-1, 1) - self.mus), axis=0)
+        self.sigmas = np.sqrt(variance / self.weights)
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
@@ -342,10 +354,32 @@ class EM(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        pass
+        self.init_params(data)
+        self.costs = self._compute_costs(data)
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
+
+    def _compute_costs(self, data):
+        costs = []
+        for _ in range(self.n_iter):
+            cost = self._compute_cost(data)
+            costs.append(cost)
+            self.expectation(data)
+            self.maximization(data)
+            if costs[-1] - cost < self.eps and costs[-1] > cost:
+                costs.append(cost)
+                break
+            costs.append(cost)
+
+        return costs
+
+    def _compute_cost(self, data):
+        sum_cost = 0
+        cost = self.weights * norm_pdf(data,self.mus,self.sigmas)
+        for i in range(len(data)):
+            sum_cost = sum_cost + cost[i]
+        return -np.sum(np.log(sum_cost))
 
     def get_dist_params(self):
         return self.weights, self.mus, self.sigmas
