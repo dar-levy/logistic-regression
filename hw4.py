@@ -438,15 +438,29 @@ class NaiveBayesGaussian(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        self.priors = {class_Label: len(y[y == class_Label]) / len(y) for class_Label in np.unique(y)}
-        self.gaussians = {class_Label: {feature: EM(self.k) for feature in range(X.shape[1])} for class_Label in np.unique(y)}
-        for label in self.gaussians.keys():
-            for feature in self.gaussians[label].keys():
-                self.gaussians[label][feature].fit(X[y == label][:, feature].reshape(-1, 1))
+        self.priors = self._calculate_priors(y)
+        self.gaussians = self._init_gaussians_models(X, y)
+        # Fit the Gaussian models for each class and each feature
+        for class_label, feature_models in self.gaussians.items():
+            for feature, model in feature_models.items():
+                feature_data = X[y == class_label][:, feature].reshape(-1, 1)
+                model.fit(feature_data)
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
 
+    def _init_gaussians_models(self, X, y):
+        return {
+            class_label: {feature: EM(self.k, random_state=self.random_state)
+                          for feature in range(X.shape[1])}
+            for class_label in np.unique(y)
+        }
+
+    def _calculate_priors(self, y):
+        return {
+            class_label: np.mean(y == class_label)
+            for class_label in np.unique(y)
+        }
     # Calculate the prior according to the formula.
     def calc_Prior(self, class_label):
         return self.priors[class_label]
