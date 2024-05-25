@@ -562,7 +562,15 @@ def generate_datasets():
     ###########################################################################
     # TODO: Implement the function.                                           #
     ###########################################################################
-    pass
+    dataset_a_means = [[0, 0, 0], [4, 4, 4], [12, 12, 12], [18, 18, 18]]
+    dataset_a_covariance = [[1.5, 0, 0], [0, 1.5, 0], [0, 0, 1.5]]
+    dataset_a_labels = [1, 0, 0, 1]
+    dataset_a_features, dataset_a_labels = generate_data(5000, dataset_a_means, dataset_a_covariance, dataset_a_labels)
+
+    dataset_b_means = [[0, 5, 0], [0, 7, 0]]
+    dataset_b_covariance = [[5, 5, 5], [5, 5, 5], [5, 5, 5]]
+    dataset_b_labels = [0, 1]
+    dataset_b_features, dataset_b_labels = generate_data(5000, dataset_b_means, dataset_b_covariance, dataset_b_labels)
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
@@ -571,3 +579,15 @@ def generate_datasets():
            'dataset_b_features': dataset_b_features,
            'dataset_b_labels': dataset_b_labels
            }
+
+def generate_data(num_instances, means, covariance, labels):
+    dataset_features = np.empty((num_instances, 3))
+    dataset_labels = np.empty((num_instances))
+    gaussian_size = num_instances // len(means)
+
+    for i, mean in enumerate(means):
+        label = labels[i]
+        points = np.random.multivariate_normal(mean, covariance, gaussian_size)
+        dataset_features[i * gaussian_size: (i + 1) * gaussian_size] = points
+        dataset_labels[i * gaussian_size: (i + 1) * gaussian_size] = np.full(gaussian_size, label)
+    return dataset_features, dataset_labels
