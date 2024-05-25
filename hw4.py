@@ -562,15 +562,17 @@ def generate_datasets():
     ###########################################################################
     # TODO: Implement the function.                                           #
     ###########################################################################
-    dataset_a_means = [[0, 0, 0], [4, 4, 4], [12, 12, 12], [18, 18, 18]]
-    dataset_a_covariance = [[1.5, 0, 0], [0, 1.5, 0], [0, 0, 1.5]]
-    dataset_a_labels = [1, 0, 0, 1]
+    dataset_a_means = [[-2, -2, -2], [6, 6, 6], [10, 10, 10], [20, 20, 20]]
+    dataset_a_covariance = [[1.2, 0.2, 0.2], [0.2, 1.2, 0.2], [0.2, 0.2, 1.2]]
+    dataset_a_labels = [0, 1, 1, 0]
     dataset_a_features, dataset_a_labels = generate_data(5000, dataset_a_means, dataset_a_covariance, dataset_a_labels)
 
-    dataset_b_means = [[0, 5, 0], [0, 7, 0]]
-    dataset_b_covariance = [[5, 5, 5], [5, 5, 5], [5, 5, 5]]
+    # Dataset B (Logistic Regression will work better)
+    dataset_b_means = [[-1, 6, -1], [1, 8, 1]]
+    dataset_b_covariance = [[4, 0.5, 0.5], [0.5, 4, 0.5], [0.5, 0.5, 4]]
     dataset_b_labels = [0, 1]
     dataset_b_features, dataset_b_labels = generate_data(5000, dataset_b_means, dataset_b_covariance, dataset_b_labels)
+
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
