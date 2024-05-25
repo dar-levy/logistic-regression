@@ -302,9 +302,9 @@ class EM(object):
         # TODO: Implement the function.                                           #
         ###########################################################################
         indexes = np.random.choice(data.shape[0], self.k, replace=False)
+        self.weights = np.ones(self.k) / self.k
         self.mus = data[indexes].reshape(self.k)
         self.sigmas = np.random.random(self.k)
-        self.weights = np.ones(self.k) / self.k
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
@@ -316,12 +316,15 @@ class EM(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        res = self.weights * norm_pdf(data, self.mus, self.sigmas)
-        sum = np.sum(res, axis=1, keepdims=True)
-        self.responsibilities = res / sum
+        weighted_pdfs = self.weights * self._compute_normal_pdf(data, self.mus, self.sigmas)
+        sum_weighted_pdfs = np.sum(weighted_pdfs, axis=1, keepdims=True)
+        self.responsibilities = weighted_pdfs / sum_weighted_pdfs
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
+
+    def _compute_normal_pdf(self, data, mus, sigmas):
+        return (1 / (np.sqrt(2 * np.pi) * sigmas)) * np.exp(-0.5 * ((data - mus) / sigmas) ** 2)
 
     def maximization(self, data):
         """
