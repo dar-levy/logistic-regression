@@ -316,15 +316,12 @@ class EM(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        weighted_pdfs = self.weights * self._compute_normal_pdf(data, self.mus, self.sigmas)
+        weighted_pdfs = self.weights * norm_pdf(data, self.mus, self.sigmas)
         sum_weighted_pdfs = np.sum(weighted_pdfs, axis=1, keepdims=True)
         self.responsibilities = weighted_pdfs / sum_weighted_pdfs
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
-
-    def _compute_normal_pdf(self, data, mus, sigmas):
-        return (1 / (np.sqrt(2 * np.pi) * sigmas)) * np.exp(-0.5 * ((data - mus) / sigmas) ** 2)
 
     def maximization(self, data):
         """
@@ -402,7 +399,8 @@ def gmm_pdf(data, weights, mus, sigmas):
     ###########################################################################
     # TODO: Implement the function.                                           #
     ###########################################################################
-    pass
+    reshaped_data = data.reshape(-1, 1)
+    pdf = np.sum(weights * norm_pdf(reshaped_data, mus, sigmas), axis=1)
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
