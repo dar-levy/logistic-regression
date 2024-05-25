@@ -491,12 +491,11 @@ class NaiveBayesGaussian(object):
         return prior * likelihood
 
     def _compute_likelihood(self, X, class_label):
-        likelihood = 1
-        for feature in range(X.shape[0]):
-            weights, mus, sigmas = self.gaussians[class_label][feature].get_dist_params()
-            gmm = gmm_pdf(X[feature], weights, mus, sigmas)
-            likelihood = likelihood * gmm
-        return likelihood
+        likelihoods = [
+            gmm_pdf(X[feature], *self.gaussians[class_label][feature].get_dist_params())
+            for feature in range(X.shape[0])
+        ]
+        return np.prod(likelihoods)
 
 
 def model_evaluation(x_train, y_train, x_test, y_test, k, best_eta, best_eps):
