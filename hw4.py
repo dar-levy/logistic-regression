@@ -438,16 +438,11 @@ class NaiveBayesGaussian(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        self.X = X
-        self.y = y
-        self.num_Of_Instances = len(X)
         self.priors = {class_Label: len(y[y == class_Label]) / len(y) for class_Label in np.unique(y)}
         self.gaussians = {class_Label: {feature: EM(self.k) for feature in range(X.shape[1])} for class_Label in np.unique(y)}
-
         for label in self.gaussians.keys():
             for feature in self.gaussians[label].keys():
                 self.gaussians[label][feature].fit(X[y == label][:, feature].reshape(-1, 1))
-
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
