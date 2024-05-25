@@ -452,6 +452,23 @@ class NaiveBayesGaussian(object):
         #                             END OF YOUR CODE                            #
         ###########################################################################
 
+    # Calculate the prior according to the formula.
+    def calc_Prior(self, class_label):
+        return self.priors[class_label]
+
+    # Calculate the likelihood according to the formula.
+    def calc_likelihood(self, X, class_label):
+        likelihood = 1
+        for feature in range(X.shape[0]):
+            weights, mus, sigmas = self.gaussians[class_label][feature].get_dist_params()
+            gmm = gmm_pdf(X[feature], weights, mus, sigmas)
+            likelihood = likelihood * gmm
+        return likelihood
+
+    # Calculate the posterior according to the formula.
+    def calc_posterior(self, X, class_label):
+        return self.calc_Prior(class_label) * self.calc_likelihood(X, class_label)
+
     def predict(self, X):
         """
         Return the predicted class labels for a given instance.
@@ -463,7 +480,8 @@ class NaiveBayesGaussian(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        pass
+        preds = [max([(self.calc_posterior(instance, class_Label), class_Label) for class_Label in self.priors.keys()],
+                     key=lambda t: t[0])[1] for instance in X]
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
