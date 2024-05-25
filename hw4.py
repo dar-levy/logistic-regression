@@ -355,26 +355,25 @@ class EM(object):
         # TODO: Implement the function.                                           #
         ###########################################################################
         self.init_params(data)
-        self.costs = [self._compute_cost(data)]
-
-        # Finding the the params for the distribution.
-        # We stop when the difference between the previous cost and the current is less than epsilon,
-        # Or when we reach n_iter.
-        for _ in range(self.n_iter):
-            cost = self._compute_cost(data)
-            self.costs.append(cost)
-            self.expectation(data)
-            self.maximization(data)
-            if self.costs[-1] - cost < self.eps:
-                if self.costs[-1] > cost:
-                    self.costs.append(cost)
-                    break
-            self.costs.append(cost)
+        self.costs = self._compute_costs(data)
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
 
-    # Calculating the cost of the data.
+    def _compute_costs(self, data):
+        costs = []
+        for _ in range(self.n_iter):
+            cost = self._compute_cost(data)
+            costs.append(cost)
+            self.expectation(data)
+            self.maximization(data)
+            if costs[-1] - cost < self.eps and costs[-1] > cost:
+                costs.append(cost)
+                break
+            costs.append(cost)
+
+        return costs
+
     def _compute_cost(self, data):
         sum_cost = 0
         cost = self.weights * norm_pdf(data,self.mus,self.sigmas)
