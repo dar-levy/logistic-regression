@@ -562,17 +562,17 @@ def generate_datasets():
     ###########################################################################
     # TODO: Implement the function.                                           #
     ###########################################################################
+    # Dataset A (Naive Bayes will work better)
     dataset_a_means = [[-2, -2, -2], [6, 6, 6], [10, 10, 10], [20, 20, 20]]
     dataset_a_covariance = [[1.2, 0.2, 0.2], [0.2, 1.2, 0.2], [0.2, 0.2, 1.2]]
     dataset_a_labels = [0, 1, 1, 0]
-    dataset_a_features, dataset_a_labels = generate_data(5000, dataset_a_means, dataset_a_covariance, dataset_a_labels)
+    dataset_a_features, dataset_a_labels = generate_dataset(5000, dataset_a_means, dataset_a_covariance, dataset_a_labels)
 
     # Dataset B (Logistic Regression will work better)
     dataset_b_means = [[-1, 6, -1], [1, 8, 1]]
     dataset_b_covariance = [[4, 0.5, 0.5], [0.5, 4, 0.5], [0.5, 0.5, 4]]
     dataset_b_labels = [0, 1]
-    dataset_b_features, dataset_b_labels = generate_data(5000, dataset_b_means, dataset_b_covariance, dataset_b_labels)
-
+    dataset_b_features, dataset_b_labels = generate_dataset(5000, dataset_b_means, dataset_b_covariance, dataset_b_labels)
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
@@ -582,14 +582,17 @@ def generate_datasets():
            'dataset_b_labels': dataset_b_labels
            }
 
-def generate_data(num_instances, means, covariance, labels):
-    dataset_features = np.empty((num_instances, 3))
-    dataset_labels = np.empty((num_instances))
+def generate_dataset(num_instances, means, covariance, labels):
+    num_features = len(means[0])
+    dataset_features = np.empty((num_instances, num_features))
+    dataset_labels = np.empty(num_instances)
     gaussian_size = num_instances // len(means)
 
-    for i, mean in enumerate(means):
-        label = labels[i]
+    for i, (mean, label) in enumerate(zip(means, labels)):
+        start_idx = i * gaussian_size
+        end_idx = start_idx + gaussian_size
         points = np.random.multivariate_normal(mean, covariance, gaussian_size)
-        dataset_features[i * gaussian_size: (i + 1) * gaussian_size] = points
-        dataset_labels[i * gaussian_size: (i + 1) * gaussian_size] = np.full(gaussian_size, label)
+        dataset_features[start_idx:end_idx] = points
+        dataset_labels[start_idx:end_idx] = label
+
     return dataset_features, dataset_labels
