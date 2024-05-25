@@ -489,8 +489,14 @@ class NaiveBayesGaussian(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        preds = [max([(self.calc_posterior(instance, class_Label), class_Label) for class_Label in self.priors.keys()],
-                     key=lambda t: t[0])[1] for instance in X]
+        preds = []
+        for instance in X:
+            posteriors = {
+                class_label: self.calc_posterior(instance, class_label)
+                for class_label in self.priors.keys()
+            }
+            predicted_class = max(posteriors, key=posteriors.get)
+            preds.append(predicted_class)
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
