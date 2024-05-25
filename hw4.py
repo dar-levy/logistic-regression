@@ -111,7 +111,6 @@ class LogisticRegressionGD(object):
         # TODO: Implement the function.                                           #
         ###########################################################################
         X = self._add_bias_term(X)
-        np.random.seed(self.random_state)
         self.theta = np.random.random(X.shape[1])
 
         for _ in range(self.n_iter):
@@ -438,10 +437,29 @@ class NaiveBayesGaussian(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        pass
+        self.priors = self._calculate_priors(y)
+        self.gaussians = self._init_gaussians_models(X, y)
+        # Fit the Gaussian models for each class and each feature
+        for class_label, feature_models in self.gaussians.items():
+            for feature, model in feature_models.items():
+                feature_data = X[y == class_label][:, feature].reshape(-1, 1)
+                model.fit(feature_data)
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
+
+    def _init_gaussians_models(self, X, y):
+        return {
+            class_label: {feature: EM(self.k, random_state=self.random_state)
+                          for feature in range(X.shape[1])}
+            for class_label in np.unique(y)
+        }
+
+    def _calculate_priors(self, y):
+        return {
+            class_label: np.mean(y == class_label)
+            for class_label in np.unique(y)
+        }
 
     def predict(self, X):
         """
@@ -454,11 +472,31 @@ class NaiveBayesGaussian(object):
         ###########################################################################
         # TODO: Implement the function.                                           #
         ###########################################################################
-        pass
+        preds = []
+        for instance in X:
+            posteriors = {
+                class_label: self._compute_posterior(instance, class_label)
+                for class_label in self.priors.keys()
+            }
+            predicted_class = max(posteriors, key=posteriors.get)
+            preds.append(predicted_class)
         ###########################################################################
         #                             END OF YOUR CODE                            #
         ###########################################################################
         return preds
+
+    def _compute_posterior(self, X, class_label):
+        likelihood = self._compute_likelihood(X, class_label)
+        prior = self.priors[class_label]
+        return prior * likelihood
+
+    def _compute_likelihood(self, X, class_label):
+        likelihoods = [
+            gmm_pdf(X[feature], *self.gaussians[class_label][feature].get_dist_params())
+            for feature in range(X.shape[0])
+        ]
+        return np.prod(likelihoods)
+
 
 def model_evaluation(x_train, y_train, x_test, y_test, k, best_eta, best_eps):
     ''' 
