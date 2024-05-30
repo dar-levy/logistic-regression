@@ -1,5 +1,6 @@
 import numpy as np
-import pandas as pd
+from matplotlib import pyplot as plt
+from matplotlib.colors import ListedColormap
 
 
 def pearson_correlation(x, y):
