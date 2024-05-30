@@ -499,6 +499,34 @@ class NaiveBayesGaussian(object):
         return np.prod(likelihoods)
 
 
+def plot_decision_regions(X, y, classifier, resolution=0.01, title=""):
+    # setup marker generator and color map
+    markers = ('.', '.')
+    colors = ('blue', 'red')
+    cmap = ListedColormap(colors[:len(np.unique(y))])
+    # plot the decision surface
+    x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution),
+                           np.arange(x2_min, x2_max, resolution))
+    Z = np.array(classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T))
+    Z = Z.reshape(xx1.shape)
+    plt.contourf(xx1, xx2, Z, alpha=0.3, cmap=cmap)
+    plt.xlim(xx1.min(), xx1.max())
+    plt.ylim(xx2.min(), xx2.max())
+
+    for idx, cl in enumerate(np.unique(y)):
+        plt.title(title)
+        plt.scatter(x=X[y == cl, 0],
+                    y=X[y == cl, 1],
+                    alpha=0.8,
+                    c=colors[idx],
+                    marker=markers[idx],
+                    label=cl,
+                    edgecolor='black')
+    plt.show()
+
+
 def model_evaluation(x_train, y_train, x_test, y_test, k, best_eta, best_eps):
     ''' 
     Read the full description of this function in the notebook.
@@ -537,10 +565,25 @@ def model_evaluation(x_train, y_train, x_test, y_test, k, best_eta, best_eps):
     lor_train_acc = _calculate_accuracy(y_train, logistic_model.predict(x_train))
     lor_test_acc = _calculate_accuracy(y_test, logistic_model.predict(x_test))
 
+    plt.figure()
+    plot_decision_regions(x_train, y_train, classifier=logistic_model, title="Logistic Regression Decision Boundaries")
+
     gaussian_model = NaiveBayesGaussian(k=k)
     gaussian_model.fit(x_train, y_train)
     bayes_train_acc = _calculate_accuracy(y_train, gaussian_model.predict(x_train))
     bayes_test_acc = _calculate_accuracy(y_test, gaussian_model.predict(x_test))
+
+    plt.figure()
+    plot_decision_regions(x_train, y_train, classifier=gaussian_model, title="Naive Bayes Gaussian Decision Boundaries")
+
+    # Plotting cost Vs  iteration for Logistic Regression
+    plt.figure(figsize=(8, 6))
+    plt.plot(range(len(logistic_model.Js)), logistic_model.Js)
+    plt.xlabel('Iterations')
+    plt.ylabel('Cost')
+    plt.title('Cost vs Iterations for Logistic Regression Model')
+    plt.grid(True)
+    plt.show()
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
@@ -548,6 +591,7 @@ def model_evaluation(x_train, y_train, x_test, y_test, k, best_eta, best_eps):
             'lor_test_acc': lor_test_acc,
             'bayes_train_acc': bayes_train_acc,
             'bayes_test_acc': bayes_test_acc}
+
 
 def generate_datasets():
     from scipy.stats import multivariate_normal
